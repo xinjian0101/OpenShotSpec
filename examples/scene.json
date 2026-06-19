@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "shot_id": "SCENE-001",
+  "duration": 5,
+  "subject": {
+    "id": "character-a",
+    "description": "A young adult wearing a dark blue jacket",
+    "action": "walks through a corridor and looks toward the doorway"
+  },
+  "scene": {
+    "location": "school corridor",
+    "time": "night",
+    "description": "A quiet corridor with rain visible through the windows"
+  },
+  "camera": {
+    "shot_type": "medium",
+    "movement": "slow forward movement",
+    "lens": "50mm"
+  },
+  "lighting": {
+    "description": "cool practical ceiling lights with soft window reflections"
+  },
+  "continuity": {
+    "previous_id": "SCENE-000",
+    "locked_attributes": ["subject.id", "subject.description", "scene.location"]
+  },
+  "extensions": {
+    "example.tool": {
+      "format_version": 1,
+      "quality_target": "preview"
+    }
+  }
+}
