@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OpenShotSpec Continuity Block",
+  "type": "object",
+  "properties": {
+    "previous_id": {"type": "string"},
+    "next_id": {"type": "string"},
+    "locked_attributes": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "approved_variants": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array"
+      }
+    },
+    "asset_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "role"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "role": {"type": "string", "minLength": 1},
+          "version": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}
