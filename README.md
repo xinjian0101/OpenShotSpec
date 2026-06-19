@@ -1,25 +1,30 @@
 # OpenShotSpec
 
-A portable JSON format and validator for video shot descriptions.
+A portable JSON format and validator for structured video scene descriptions.
 
 ## MVP
 
-- Validate shot ID, duration, subject, and camera fields
-- Check positive duration and required shot type
-- Convert structured shot data into a readable description
-- Include a JSON Schema
+- Validate ID, duration, subject, and camera fields
+- Check positive duration and required camera type
+- Convert structured records into readable production descriptions
 
 ## Run
 
 ```bash
-python main.py examples/shot.json
-python main.py examples/shot.json --describe
+python main.py scene.json
+python main.py scene.json --describe
+```
+
+Minimum input:
+
+```json
+{"shot_id":"S1","duration":3,"subject":{},"camera":{"shot_type":"medium"}}
 ```
 
 ## Test
 
 ```bash
-python -m unittest -v
+python checks.py
 ```
 
 ## License
