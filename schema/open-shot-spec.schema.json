@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/open-shot-spec.schema.json",
+  "title": "OpenShotSpec Scene Record",
+  "type": "object",
+  "required": ["shot_id", "duration", "subject", "camera"],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1
+    },
+    "shot_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "duration": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "subject": {
+      "type": "object"
+    },
+    "scene": {
+      "type": "object"
+    },
+    "camera": {
+      "type": "object",
+      "required": ["shot_type"],
+      "properties": {
+        "shot_type": {"type": "string", "minLength": 1},
+        "movement": {"type": "string"},
+        "lens": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "lighting": {
+      "type": "object"
+    },
+    "continuity": {
+      "type": "object"
+    },
+    "extensions": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}
