@@ -1,0 +1,67 @@
+name: Feature request
+description: Propose a shared field, schema, sequence, migration, adapter, or tooling improvement
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Shared-format proposals require cross-tool value, compatibility analysis, fixtures, and a clear migration story.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Feature area
+      options:
+        - Core record field
+        - Continuity block
+        - JSON Schema
+        - Sequence validation
+        - Description output
+        - Legacy migration
+        - Adapter contract
+        - Extension namespace
+        - Example or documentation
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Interoperability problem
+      description: Which tools or workflows cannot exchange the required meaning today?
+    validations:
+      required: true
+  - type: textarea
+    id: record
+    attributes:
+      label: Proposed record example
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: semantics
+    attributes:
+      label: Field semantics and validation rules
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Versioning, migration, and adapter impact
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria and fixtures
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Specification checks
+      options:
+        - label: The proposal has cross-tool value rather than one-vendor value only.
+          required: true
+        - label: Unsupported or lossy adapter behavior can be reported explicitly.
+          required: true
+        - label: Backward compatibility and migration were considered.
+          required: true
