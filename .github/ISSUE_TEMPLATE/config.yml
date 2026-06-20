@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Project overview
+    url: https://github.com/xinjian0101/OpenShotSpec/blob/main/ABOUT.md
+    about: Review the format mission, compatibility model, maturity, and governance.
+  - name: Specification and migration guides
+    url: https://github.com/xinjian0101/OpenShotSpec/tree/main/docs
+    about: Read compatibility, adapter, migration, extension, and language policies.
