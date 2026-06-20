@@ -1,139 +1,190 @@
+<div align="center">
+
 # OpenShotSpec
 
-A portable JSON format and validator for structured video-scene descriptions. It is intended for shot planning, AI-video prompt pipelines, storyboard exchange, and tool-to-tool scene metadata transfer.
+**Portable, continuity-aware JSON records for scenes, shots, adapters, and creative tooling.**
 
-中文定位：用于描述镜头、主体、动作和摄影信息的可移植 JSON 规范与校验器。
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Format](https://img.shields.io/badge/Format-JSON-0969da)](schema/open-shot-spec.schema.json)
+[![License](https://img.shields.io/badge/License-MIT-2ea44f)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Active%20Specification-f59e0b)](MAINTENANCE.md)
 
-> Current status: compact MVP and evolving interchange specification. The validator does not generate video and does not guarantee compatibility with every downstream tool.
+[Quick start](#quick-start) · [Record model](#record-model) · [Sequence validation](#sequence-validation) · [Migration](#legacy-migration) · [About](ABOUT.md)
 
-## Use cases
+</div>
 
-- Exchange structured shot descriptions between creative tools
-- Validate scene records before prompt generation or rendering
-- Store shot plans in a machine-readable format
-- Convert structured fields into readable production descriptions
-- Build adapters for storyboard, editing, and generation systems
+---
 
-## Current capabilities
+OpenShotSpec defines a vendor-neutral scene and shot record for storyboard, previsualization, prompt planning, continuity tracking, and tool-to-tool metadata exchange. The repository includes single-record validation, sequence validation, readable descriptions, schemas, examples, migration utilities, and adapter policies.
 
-- Validate `shot_id`, `duration`, `subject`, and `camera`
-- Require a positive duration
-- Require a camera shot type
-- Reject structurally invalid records
-- Convert valid records into readable descriptions
-- Run locally without a paid API
+> [!NOTE]
+> OpenShotSpec describes creative intent and continuity metadata. It does not render media or guarantee semantic equivalence across every downstream tool.
+
+## At a glance
+
+| Area | Current support |
+|---|---|
+| Format | JSON and JSONL |
+| Validation | Required fields, versions, duration, camera, continuity |
+| Sequences | Duplicate IDs, missing references, reciprocal links |
+| Description | Deterministic readable production text |
+| Migration | Safe legacy-field migration with change report |
+| Extensibility | Vendor-specific extension namespaces |
+| Runtime | Python standard library |
 
 ## Quick start
 
-### Requirements
-
-- Python 3.10 or newer
-
-### Validate a scene
+Validate one record:
 
 ```bash
-python main.py scene.json
+python main.py examples/scene.json
 ```
 
-### Generate a readable description
+Generate a readable description:
 
 ```bash
-python main.py scene.json --describe
+python main.py examples/scene.json --describe
 ```
 
-### Run checks
+Validate a JSONL sequence:
 
 ```bash
-python checks.py
+python sequence.py examples/sequence.jsonl -o sequence-validation.json
 ```
+
+Run tests:
+
+```bash
+python -m unittest -v
+```
+
+## Capability matrix
+
+| Capability | Status | Notes |
+|---|---:|---|
+| Core scene validation | ✅ | Stable required fields |
+| Continuity references | ✅ | Single-record and sequence checks |
+| JSON Schema | ✅ | Draft 2020-12 documents |
+| Legacy migration | ✅ | Non-destructive change tracking |
+| Adapter contract | ✅ | Loss reporting and version declaration |
+| Media generation | ❌ | Outside scope |
+| Universal vendor mapping | ❌ | Adapters must report unsupported data |
 
 ## Minimum record
 
 ```json
 {
-  "shot_id": "S1",
-  "duration": 3,
-  "subject": {},
-  "camera": {
-    "shot_type": "medium"
-  }
-}
-```
-
-## Recommended extended record
-
-```json
-{
-  "spec_version": "0.1",
-  "shot_id": "S1",
+  "schema_version": 1,
+  "shot_id": "SCENE-001",
   "duration": 3.5,
   "subject": {
-    "description": "a delivery rider entering a quiet apartment corridor",
-    "action": "stops and looks toward a half-open door"
+    "description": "A delivery rider in a dark blue jacket",
+    "action": "stops beside a half-open door"
   },
   "camera": {
     "shot_type": "medium",
     "movement": "slow push-in",
-    "angle": "eye level",
-    "lens": "35mm"
-  },
-  "scene": {
-    "location": "older residential building",
-    "time": "night",
-    "lighting": "single ceiling lamp with practical shadows"
-  },
-  "continuity": {
-    "character_id": "rider-01",
-    "costume_id": "uniform-blue-v1",
-    "previous_shot": null
-  },
-  "notes": [
-    "keep the doorway visible",
-    "avoid readable private information"
-  ]
+    "lens": "35mm lens"
+  }
 }
 ```
 
-Only fields supported by the current validator are guaranteed to affect validation or description output. Additional fields should be treated as forward-compatible metadata unless documented otherwise.
+## Record model
 
-## Design principles
+| Block | Purpose |
+|---|---|
+| `subject` | Identity, appearance, and action |
+| `scene` | Location, time, environment, and context |
+| `camera` | Shot type, movement, angle, and lens |
+| `lighting` | Practical and artistic lighting intent |
+| `continuity` | Previous/next references, locks, and assets |
+| `extensions` | Tool-specific metadata outside the shared core |
 
-- **Portable**: records should not depend on one generation vendor.
-- **Explicit**: camera, subject, duration, and identifiers are separate fields.
-- **Versionable**: format changes should declare a specification version.
-- **Extensible**: optional metadata can be added without redefining the core.
-- **Reviewable**: a human should be able to inspect the JSON and its readable description.
-- **Deterministic**: identical valid input should produce stable validation results.
+## Sequence validation
+
+`sequence.py` checks multiple records for:
+
+- duplicate `shot_id` values;
+- missing `previous_id` and `next_id` targets;
+- self-references;
+- non-reciprocal continuity links;
+- invalid scene records inside the sequence.
+
+Example result:
+
+```json
+{
+  "records": 3,
+  "valid": true,
+  "issue_count": 0,
+  "issues": []
+}
+```
+
+## Legacy migration
+
+```bash
+python migrate.py legacy-shot.json \
+  -o migrated-shot.json \
+  --report migration-report.json
+```
+
+The migration utility can:
+
+- add `schema_version`;
+- rename `camera.type` to `camera.shot_type`;
+- move legacy scene and lighting descriptions;
+- deduplicate continuity locks;
+- preserve the original input object;
+- report every applied change.
 
 ## Recommended workflow
 
-1. Author or export a scene record.
-2. Validate the record with OpenShotSpec.
-3. Review errors and unsupported fields.
-4. Generate a readable production description.
-5. Pass the validated record through a downstream adapter.
-6. Archive the source record, spec version, and adapter version.
+```text
+scene authoring
+      ↓
+OpenShotSpec validation
+      ↓
+sequence continuity validation
+      ↓
+human creative review
+      ↓
+versioned adapter
+      ↓
+downstream storyboard / prompt / production tool
+```
 
-## Compatibility rules
+## Repository map
 
-- Unknown optional fields should not silently change core meaning.
-- Required-field changes need a specification-version update.
-- Renamed fields require a documented migration path.
-- Adapters should declare the OpenShotSpec versions they support.
-- Vendor-specific fields should live in a clearly named extension namespace.
+| Path | Purpose |
+|---|---|
+| `main.py` | Single-record validation and description output |
+| `sequence.py` | Multi-record continuity validation |
+| `migrate.py` | Safe legacy-record migration |
+| `schema/` | Core and continuity schemas |
+| `examples/` | Complete records and sequences |
+| `docs/` | Compatibility, adapters, migration, and language policy |
+| `test_*.py` / `checks.py` | Validation and migration tests |
+| `ABOUT.md` | Mission, maturity, boundaries, and governance |
 
-## Known limitations
+## Compatibility principles
 
-- The current validator covers a small core schema.
-- It does not validate visual realism, prompt quality, copyright, or safety policy.
-- It does not render images or video.
-- It does not guarantee semantic equivalence between different generation systems.
-- Extended example fields may require future validator support.
+- Required-field changes require a version increment.
+- Renamed fields require a migration path.
+- Unknown optional data must not silently alter core meaning.
+- Adapters must declare supported versions and report losses.
+- Tool-specific fields belong in a named extension namespace.
 
 ## Documentation
 
-- [Compatibility Guide](docs/COMPATIBILITY.md)
-- [Maintenance Trace](MAINTENANCE_TRACE.md)
+- [About the project](ABOUT.md)
+- [Compatibility guide](docs/COMPATIBILITY.md)
+- [Format extension guide](docs/FORMAT_EXTENSION_GUIDE.md)
+- [Migration policy](docs/MIGRATION_POLICY.md)
+- [Adapter contract](docs/ADAPTER_CONTRACT.md)
+- [Language policy](docs/LANGUAGE_POLICY.md)
+- [Maintenance trace](MAINTENANCE_TRACE.md)
+- [Maintenance policy](MAINTENANCE.md)
 
 ## License
 
