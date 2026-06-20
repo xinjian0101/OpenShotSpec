@@ -1,0 +1,64 @@
+name: Bug report
+description: Report a reproducible validation, sequence, description, or migration defect
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use synthetic scene records and remove private asset paths or production identifiers.
+  - type: input
+    id: version
+    attributes:
+      label: Commit or version
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Single-record validation
+        - Sequence validation
+        - Readable description
+        - JSON Schema
+        - Continuity references
+        - Legacy migration
+        - Adapter contract
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: record
+    attributes:
+      label: Minimal scene or sequence record
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Reproduction command
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission checks
+      options:
+        - label: The fixture is synthetic and contains no private production data.
+          required: true
+        - label: I identified the source schema version and tested commit.
+          required: true
