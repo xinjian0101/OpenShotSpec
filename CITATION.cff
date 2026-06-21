@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use OpenShotSpec, cite this repository and the exact commit used."
+title: "OpenShotSpec"
+type: software
+authors:
+  - name: "xinjian0101"
+repository-code: "https://github.com/xinjian0101/OpenShotSpec"
+url: "https://github.com/xinjian0101/OpenShotSpec/blob/main/ABOUT.md"
+license: MIT
+keywords:
+  - JSON Schema
+  - storyboard
+  - continuity
+  - creative tools
+  - interoperability
+abstract: "A portable continuity-aware scene and shot format with validators, schemas, migrations, sequence checks, and adapter contracts."
